@@ -51,28 +51,30 @@ public class Rasterization {
 
         int y = y0;
         int x = x0;
-        int error = 0;
 
         if (dx >= dy) {
-            int deltaerr = (dy + 1);
+            int error = dy * 2 - dx;
+            int deltaerr = (dy - dx) * 2;
             for (; x != x1 + dirx; x += dirx) {
                 pixelWriter.setColor(x, y, Inner.getColorForLine(x, y, x0, y0, x1, y1, color0, color1));
-                error = error + deltaerr;
-
-                if (error >= (dx + 1)) {
+                if (error < 0) {
+                    error += 2 * dy;
+                } else {
                     y += diry;
-                    error = error - (dx + 1);
+                    error += deltaerr;
                 }
             }
         } else {
-            int deltaerr = (dx + 1);
+            int error = dx * 2 - dy;
+            int deltaerr = (dx - dy) * 2;
             for (; y != y1 + diry; y += diry) {
                 pixelWriter.setColor(x, y, Inner.getColorForLine(x, y, x0, y0, x1, y1, color0, color1));
-                error = error + deltaerr;
 
-                if (error >= (dy + 1)) {
+                if (error < 0) {
+                    error += dx * 2;
+                } else {
                     x += dirx;
-                    error = error - (dy + 1);
+                    error += deltaerr;
                 }
             }
         }
